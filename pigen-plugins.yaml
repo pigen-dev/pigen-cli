@@ -1,0 +1,13 @@
+plugins:
+- id: artifact_registry_tf
+  repo_url: https://github.com/pigen-dev/artifact-registry-tf-plugin
+  version: v0.1.1
+  plugin:
+    label: ARTIFACT_REGISTRY_final
+    config:
+      location: europe-west1
+      repo_id: pigen-testing
+      project_id: aidodev
+      description: This is a test repository
+    output:
+      repo_url: null
