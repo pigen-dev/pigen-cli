@@ -30,3 +30,18 @@ func StructToJson(in any) ([]byte, error) {
 	}
 	return jsonData, nil
 }
+
+func WriteYamlFile(filePath string, in any) error {
+	// Marshal the struct into YAML
+	yamlData, err := yaml.Marshal(in)
+	if err != nil {
+		return fmt.Errorf("failed to marshal struct to YAML: %w", err)
+	}
+	// Write the YAML data to the file
+	err = os.WriteFile(filePath, yamlData, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write YAML file: %w", err)
+	}
+	fmt.Printf("✅ Successfully wrote to %s\n", filePath)
+	return nil
+}

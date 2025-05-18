@@ -1,0 +1,26 @@
+plugins:
+  - id: google_cloud_run
+    repo_url: https://github.com/pigen-plugins/google-cloud-run
+    version: v0.1.0
+    plugin:
+      label: GOOGLE_CLOUD_RUN_DEMO
+      config:
+          location: europe-west1
+          project_id: aidodev
+          service_name: pigen-demo
+          unauthenticated: true
+      output:
+          cloud_run_url: null
+
+  - id: secret_manager
+    repo_url: https://github.com/pigen-plugins/secret-manager
+    version: v0.1.2
+    plugin:
+      label: SECRET_MANAGER_DEMO
+      config:
+          project_id: aidodev
+          prefix: pigen
+          secrets:
+            MY_SECRET: "This is a secret"
+      output:
+        secrets_list: []
