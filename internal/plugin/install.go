@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/pigen-dev/pigen-cli/pkg"
 	shared "github.com/pigen-dev/shared"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
@@ -18,6 +19,7 @@ type PluginFile struct {
 }
 
 func PluginInstall(filePath string) error {
+	var coreResp pkg.PigenCoreResponse
 	var pluginFile PluginFile
 	fmt.Println("Installing plugins from file:", filePath)
 	// Read the file content
@@ -43,7 +45,14 @@ func PluginInstall(filePath string) error {
 		}
 		defer resp.Body.Close()
 		body, _ := io.ReadAll(resp.Body)
-		fmt.Println("Response:", string(body))
+		err = json.Unmarshal(body, &coreResp)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshal response: %w", err)
+		}
+		if coreResp.Error != "" {
+			return fmt.Errorf("failed to create trigger: %s", coreResp.Error)
+		}
+		fmt.Println("Plugin installed successfully:", plugin.Plugin.Label)
 	}
 	return nil
 }

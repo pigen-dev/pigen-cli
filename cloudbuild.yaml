@@ -1,0 +1,17 @@
+steps:
+- id: mvn-Build
+  name: maven:3.3-jdk-8
+  entrypoint: sh
+  args:
+  - -c
+  - mvn package
+- id: Docker-build-push
+  name: gcr.io/cloud-builders/docker
+  entrypoint: bash
+  args:
+  - -c
+  - |-
+    docker build -t europe-west1-docker.pkg.dev/aidodev/pigen-demo/demo:latest .
+    docker push europe-west1-docker.pkg.dev/aidodev/pigen-demo/demo:latest
+options:
+  logging: CLOUD_LOGGING_ONLY

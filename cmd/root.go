@@ -9,6 +9,7 @@ import (
 
 	"github.com/pigen-dev/pigen-cli/cmd/config"
 	"github.com/pigen-dev/pigen-cli/cmd/plugin"
+	"github.com/pigen-dev/pigen-cli/cmd/pipeline"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -19,7 +20,19 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "pigen",
 	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
+	Long: `
+	
+   ▄███████▄  ▄█     ▄██████▄     ▄████████ ███▄▄▄▄   
+  ███    ███ ███    ███    ███   ███    ███ ███▀▀▀██▄ 
+  ███    ███ ███▌   ███    █▀    ███    █▀  ███   ███ 
+  ███    ███ ███▌  ▄███         ▄███▄▄▄     ███   ███ 
+▀█████████▀  ███▌ ▀▀███ ████▄  ▀▀███▀▀▀     ███   ███ 
+  ███        ███    ███    ███   ███    █▄  ███   ███ 
+  ███        ███    ███    ███   ███    ███ ███   ███ 
+ ▄████▀      █▀     ████████▀    ██████████  ▀█   █▀  
+                                                      
+
+A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
 
 Cobra is a CLI library for Go that empowers applications.
@@ -28,10 +41,25 @@ to quickly create a Cobra application.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		fmt.Print(`
+		
+   ▄███████▄  ▄█     ▄██████▄     ▄████████ ███▄▄▄▄   
+  ███    ███ ███    ███    ███   ███    ███ ███▀▀▀██▄ 
+  ███    ███ ███▌   ███    █▀    ███    █▀  ███   ███ 
+  ███    ███ ███▌  ▄███         ▄███▄▄▄     ███   ███ 
+▀█████████▀  ███▌ ▀▀███ ████▄  ▀▀███▀▀▀     ███   ███ 
+  ███        ███    ███    ███   ███    █▄  ███   ███ 
+  ███        ███    ███    ███   ███    ███ ███   ███ 
+ ▄████▀      █▀     ████████▀    ██████████  ▀█   █▀  
+                                                      
+`)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
+
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -42,6 +70,7 @@ func Execute() {
 func AddSubCommandPaletts(){
 	rootCmd.AddCommand(plugin.PluginCmd)
 	rootCmd.AddCommand(config.ConfigCmd)
+	rootCmd.AddCommand(pipeline.PipelineCmd)
 }
 
 func init() {
