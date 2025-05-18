@@ -1,0 +1,32 @@
+package helpers
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+
+	"gopkg.in/yaml.v3"
+)
+
+func ReadYamlFile(filePath string, out any) error {
+	// Read the file content
+	fileContent, err := os.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to read file: %w", err)
+	}
+	// Unmarshal the YAML content into the provided struct
+	err = yaml.Unmarshal(fileContent, out)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal YAML file: %w", err)
+	}
+	return nil
+}
+
+func StructToJson(in any) ([]byte, error) {
+	// Marshal the struct into JSON
+	jsonData, err := json.MarshalIndent(in, "", "  ")
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal YAML to JSON: %w", err)
+	}
+	return jsonData, nil
+}

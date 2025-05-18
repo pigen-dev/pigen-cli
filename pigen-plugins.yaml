@@ -1,0 +1,39 @@
+plugins:
+# - id: artifact_registry_tf
+#   repo_url: https://github.com/pigen-dev/artifact-registry-tf-plugin
+#   version: v0.1.1
+#   plugin:
+#     label: ARTIFACT_REGISTRY_DEMO
+#     config:
+#       location: europe-west1
+#       repo_id: pigen-demo
+#       project_id: aidodev
+#       description: This is a test repository
+#     output:
+#       repo_url: null
+
+- id: secret_manager
+  repo_url: https://github.com/pigen-plugins/secret-manager
+  version: v0.1.2
+  plugin:
+    label: SECRET_MANAGER_DEMO
+    config:
+      project_id: aidodev
+      prefix: PIGEN
+      secrets:
+        MY_SECRET: secret_test
+    output:
+      secrets_list: []
+
+- id: google_cloud_run
+  repo_url: https://github.com/pigen-plugins/google-cloud-run
+  version: v0.1.0
+  plugin:
+    label: GOOGLE_CLOUD_RUN_DEMO
+    config:
+      project_id: aidodev
+      location: europe-west1
+      service_name: pigen-demo
+      unauthenticated: true
+    output:
+      cloud_run_url: null
