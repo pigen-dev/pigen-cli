@@ -22,9 +22,9 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		err := plugin.PluginInstall(pluginsFile)
 		if err != nil {
-			cmd.PrintErr("Error installing plugins: ", err)
+			cmd.PrintErr("❌ Error installing plugins: ", err)
 		} else {
-			cmd.Println("Plugins installed successfully.")
+			cmd.Println("✅ Plugins installed successfully.")
 		}
 	},
 }

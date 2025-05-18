@@ -101,6 +101,6 @@ func create_trigger(jsonPigenSteps []byte) error {
 	}
 	//fmt.Println(coreResp.Message)
 	//Fix returned message
-	fmt.Println("Trigger created successfully")
+	fmt.Println("✅ Trigger created successfully")
 	return nil
 }
