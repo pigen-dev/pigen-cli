@@ -27,7 +27,7 @@ func DestroyPlugin(filePath, pluginName string) error {
 			resp, err := PluginPostRequest(plugin, DestroyEndpoint)
 			defer resp.Body.Close()
 			body, _ := io.ReadAll(resp.Body)
-			err = json.Unmarshal(body, coreResp)
+			err = json.Unmarshal(body, &coreResp)
 			if err != nil {
 				return fmt.Errorf("failed to unmarshal response: %w", err)
 			}
