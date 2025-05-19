@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/pigen-dev/pigen-cli/helpers"
+	"github.com/pigen-dev/pigen-cli/internal/templater"
 	"github.com/pigen-dev/pigen-cli/pkg"
 	shared "github.com/pigen-dev/shared"
 	"github.com/spf13/viper"
@@ -22,9 +23,17 @@ type ConnectRepoResponse struct {
 
 func SetupPipeline(pigenStepsPath string) error {
 	var pigenStepsFile shared.PigenStepsFile
-	err := helpers.ReadYamlFile(pigenStepsPath, &pigenStepsFile)
+	yamlFile, err := helpers.ReadYamlFile(pigenStepsPath)
 	if err != nil {
 		return fmt.Errorf("failed to read pigen steps file: %w", err)
+	}
+	yamlFile, err = templater.PigenReplacer(yamlFile, "pigen-plugins.yaml")
+	if err != nil {
+		return fmt.Errorf("failed to replace secrets: %w", err)
+	}
+	err = helpers.YamlToStruct(yamlFile, &pigenStepsFile)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal pigen steps file: %w", err)
 	}
 	jsonData, err := helpers.StructToJson(pigenStepsFile)
 	if err != nil {
@@ -57,8 +66,9 @@ func SetupPipeline(pigenStepsPath string) error {
 			return fmt.Errorf("timeout while waiting for action to be completed please run again the command")
 		}
 	}
-	fmt.Println(resp.Message)
+	fmt.Println("✅ Repo connected successfully")
 	// Create trigger
+	fmt.Println("⏳ Creating trigger...")
 	err = create_trigger(jsonData)
 	if err != nil {
 		return fmt.Errorf("failed to create trigger: %w", err)
@@ -91,7 +101,6 @@ func create_trigger(jsonPigenSteps []byte) error {
 	}
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
-	fmt.Println(string(body))
 	err = json.Unmarshal(body, &coreResp)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal response: %w", err)

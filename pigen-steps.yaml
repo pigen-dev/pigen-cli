@@ -11,7 +11,7 @@ config:
 steps:
   - step: mvn-compile
     placeholders:
-      flags: "{{.ENV.GOOGLE_API_KEY}}"
+      flags: {{.ENV.GOOGLE_API_KEY}}
   - step: Docker-build-push
     placeholders:
-      image: europe-west1-docker.pkg.dev/aidodev/pigen-demo/demo:latest
+      image: {{ .Plugins.GOOGLE_CLOUD_RUN_DEMO.cloud_run_url }}

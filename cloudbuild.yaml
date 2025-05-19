@@ -4,14 +4,14 @@ steps:
   entrypoint: sh
   args:
   - -c
-  - mvn package
+  - mvn package testing it
 - id: Docker-build-push
   name: gcr.io/cloud-builders/docker
   entrypoint: bash
   args:
   - -c
   - |-
-    docker build -t europe-west1-docker.pkg.dev/aidodev/pigen-demo/demo:latest .
-    docker push europe-west1-docker.pkg.dev/aidodev/pigen-demo/demo:latest
+    docker build -t https://pigen-demo-tbzd7duvvq-ew.a.run.app .
+    docker push https://pigen-demo-tbzd7duvvq-ew.a.run.app
 options:
   logging: CLOUD_LOGGING_ONLY

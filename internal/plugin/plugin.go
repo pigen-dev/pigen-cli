@@ -15,7 +15,7 @@ type PluginFile struct {
 	Plugins []shared.PluginStruct `yaml:"plugins"`
 }
 
-func (p *PluginFile) GetPlugins(filePath string) (string, error) {
+func (p *PluginFile) GetPlugins(filePath string) (pigenCoreEndpoint string, err error) {
 	fmt.Println("Plugins file path:", filePath)
 	// Read the file content
 	fileContent, err := os.ReadFile(filePath)
@@ -26,7 +26,7 @@ func (p *PluginFile) GetPlugins(filePath string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to unmarshal plugin file: %w", err)
 	}
-	pigenCoreEndpoint := fmt.Sprintf("%s/api/v1/plugin", viper.GetString("config.pigen_core.endpoint"))
+	pigenCoreEndpoint = fmt.Sprintf("%s/api/v1/plugin", viper.GetString("config.pigen_core.endpoint"))
 	return pigenCoreEndpoint, nil
 }
 

@@ -8,7 +8,9 @@ import (
 	"io"
 	"net/http"
 	"os"
+
 	"github.com/pigen-dev/pigen-cli/helpers"
+	"github.com/pigen-dev/pigen-cli/internal/templater"
 	"github.com/pigen-dev/pigen-cli/pkg"
 	shared "github.com/pigen-dev/shared"
 	"github.com/spf13/viper"
@@ -21,31 +23,35 @@ type GenerateScriptResponse struct {
 
 
 func GenerateScript(pigenStepsPath string) error {
-	var pigenStepsFile shared.PigenStepsFile
-	err := helpers.ReadYamlFile(pigenStepsPath, &pigenStepsFile)
+	yamlFile, err := helpers.ReadYamlFile(pigenStepsPath)
 	if err != nil {
 		return fmt.Errorf("failed to read pigen steps file: %w", err)
 	}
-	jsonData, err := helpers.StructToJson(pigenStepsFile)
-	if err != nil {
-		return fmt.Errorf("failed to convert pigen steps file to json: %w", err)
-	}
-	// Replace secrets in the JSON data
-	jsonData, err = helpers.ReplaceSecrets(jsonData)
+	
+	yamlFile, err = templater.PigenReplacer(yamlFile, "pigen-plugins.yaml")
 	if err != nil {
 		return fmt.Errorf("failed to replace secrets: %w", err)
 	}
-	err = generate(jsonData)
+	err = generate(yamlFile)
 	if err != nil {
 		return fmt.Errorf("failed to generate script: %w", err)
 	}
 	return nil
 }
 
-func generate(jsonPigenSteps []byte) error {
+func generate(pigenSteps []byte) error {
 	var coreResp GenerateScriptResponse
+	var pigenStepsFile shared.PigenStepsFile
+	err := helpers.YamlToStruct(pigenSteps, &pigenStepsFile)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal pigen steps file: %w", err)
+	}
+	jsonData, err := helpers.StructToJson(pigenStepsFile)
+	if err != nil {
+		return fmt.Errorf("failed to convert pigen steps file to json: %w", err)
+	}
 	pigenCoreEndpoint := fmt.Sprintf("%s/api/v1/cicd/gen_script", viper.GetString("config.pigen_core.endpoint"))
-	resp, err := http.Post(pigenCoreEndpoint, "application/json", bytes.NewBuffer(jsonPigenSteps))
+	resp, err := http.Post(pigenCoreEndpoint, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("failed to send request: %w", err)
 	}
@@ -56,7 +62,7 @@ func generate(jsonPigenSteps []byte) error {
 		return fmt.Errorf("failed to unmarshal response: %v", err.Error())
 	}
 	if coreResp.Error != "" {
-		return fmt.Errorf("failed to create trigger: %v", coreResp.Error)
+		return fmt.Errorf("core response error : %v", coreResp.Error)
 	}
 	data, err := base64.StdEncoding.DecodeString(coreResp.Content)
 	if err != nil {
