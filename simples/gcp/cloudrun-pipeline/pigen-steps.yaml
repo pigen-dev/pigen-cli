@@ -1,0 +1,34 @@
+type: cloudbuild
+version: v1.1.1
+repo_url: https://github.com/pigen-dev/cloudbuild-plugin
+config:
+  deployment:
+    #NOTE: The project_number should be set in the format of a string ( "775465758731" not 775465758731 )
+    project_number: "775465758731"
+    project_id: aidodev
+    project_region: "europe-west1"
+  github_url: https://github.com/pigen-dev/pigen-core.git
+  target_branch: "^test-pigen$"
+
+
+steps:
+  # This step builds and pushes the Docker image to Google Artifact Registry
+  - step: Docker-build-push
+    placeholders:
+      # I'm using the ARTIFACT_REGISTRY_DEMO plugin output to get the repository URL
+      image: "{{.Plugins.ARTIFACT_REGISTRY_DEMO.repository_url}}/landing:latest"
+
+
+  # This step deploys the service to Google Cloud Run
+  - step: google-cloud-run
+    placeholders:
+      # I'm using the GOOGLE_CLOUD_RUN_DEMO plugin output to get the service name
+      service_name: {{.Plugins.GOOGLE_CLOUD_RUN_DEMO.service_name}}
+      image: "{{.Plugins.ARTIFACT_REGISTRY_DEMO.repository_url}}/landing:latest"
+      secrets:
+        # I'm using the SECRET_MANAGER_DEMO plugin output to get the secrets list
+        # .Plugins.SECRET_MANAGER_DEMO.secrets_list will return a list of secrets that will be injected into the Cloud Run service
+        secret_list: {{.Plugins.SECRET_MANAGER_DEMO.secrets_list}}
+        # The prefix is a string that will be used to prefix the environment variable names to format the secret names
+        # For example, if the prefix is LANDING and the environment variable is GOOGLE_API_KEY, the secret name will be LANDING_GOOGLE_API_KEY
+        secret_prefix: {{.Plugins.SECRET_MANAGER_DEMO.prefix}}

@@ -19,10 +19,17 @@ func (g *PigenCoreGCP) DeployPigenCore() (string, error) {
 	containerPort := &runpb.ContainerPort{
 		ContainerPort:5000,
 	}
+	ressources := &runpb.ResourceRequirements{
+		Limits: map[string]string{
+			"cpu":    "1",
+			"memory": "1G",
+		},
+	}
 	googleCloudRunV2Container := &runpb.Container{
 		Image: "fedimersni/pigen-core:latest",
 		Name: "pigen-core",
 		Ports: []*runpb.ContainerPort{containerPort},
+		Resources: ressources,
 	}
 
 	revisionTemplate := &runpb.RevisionTemplate{
