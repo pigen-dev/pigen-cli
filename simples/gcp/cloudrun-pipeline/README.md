@@ -114,3 +114,6 @@ Deploys the image to a Cloud Run service. It also injects environment secrets fe
 - `github_url`: URL of your GitHub repository.
 - `target_branch`: Used to trigger the pipeline on specific branches (e.g., `test-pigen`).
 - `.env.pigen`: File for secret values. **Never commit this file**; add it to your `.gitignore`.
+
+## ▶️ DEMO
+A simple [video](https://drive.google.com/file/d/1nJBQrqYLD_uHX1zFPXNP2x2rst2GiRJr/view?usp=sharing) using this example to deploy the pigen landing page.
