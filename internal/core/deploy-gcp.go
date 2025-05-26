@@ -7,6 +7,8 @@ import (
 	"cloud.google.com/go/iam/apiv1/iampb"
 	"cloud.google.com/go/run/apiv2"
 	runpb "cloud.google.com/go/run/apiv2/runpb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type PigenCoreGCP struct {
@@ -18,6 +20,25 @@ func (g *PigenCoreGCP) DeployPigenCore() (string, error) {
 	ctx := context.Background()
 	containerPort := &runpb.ContainerPort{
 		ContainerPort:5000,
+	}
+	client, err := run.NewServicesClient(ctx)
+	if err != nil {
+		return "", fmt.Errorf("error waiting for Cloud Run service creation: %v", err)
+	}
+	// If the service already exists, we return its URI
+	// If not we return an empty string and create the service
+	uri, err := serviceExists(ctx, client, g.ProjectID, g.Region, "pigen-core")
+	if err != nil {
+		fmt.Printf("error checking if service exists: %v\n", err)
+		fmt.Println("Trying to create new service...")
+	}
+	if uri != "" {
+		// If the service already exists, return its URI
+		fmt.Println("Service already exists, returning existing URI...")
+		return uri, nil
+	}
+	if uri == "" && err == nil {
+		fmt.Println("Service does not exist, creating new service...")
 	}
 	ressources := &runpb.ResourceRequirements{
 		Limits: map[string]string{
@@ -44,10 +65,6 @@ func (g *PigenCoreGCP) DeployPigenCore() (string, error) {
 		Parent: "projects/"+g.ProjectID+"/locations/" + g.Region,
 		Service: service,
 		ServiceId:"pigen-core",
-	}
-	client, err := run.NewServicesClient(ctx)
-	if err != nil {
-		return "", fmt.Errorf("error waiting for Cloud Run service creation: %v", err)
 	}
 	op, err := client.CreateService(ctx, createServiceRequest)
 	if err != nil {
@@ -93,4 +110,19 @@ func (g *PigenCoreGCP) DeployPigenCore() (string, error) {
 	}
 
 	return resp.Uri, nil
+}
+
+func serviceExists(ctx context.Context, client *run.ServicesClient, projectID, region, serviceName string) (string, error) {
+	getServiceRequest := &runpb.GetServiceRequest{
+		Name: fmt.Sprintf("projects/%s/locations/%s/services/%s", projectID, region, serviceName),
+	}
+	resp, err := client.GetService(ctx, getServiceRequest)
+	if err != nil {
+		if status.Code(err) == codes.NotFound  {
+		return "", nil
+		}
+		return "", fmt.Errorf("error checking if service exists: %v", err)
+	}
+	
+	return resp.Uri, nil // Service exists
 }
