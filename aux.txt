@@ -1,0 +1,30 @@
+package plugin
+
+import (
+	"regexp"
+)
+
+func PluginTemplater(plugin []byte) ([]byte, error) {
+	deps := ExtractTemplateDependencies(string(plugin))
+	outputs := make(map[string]any)
+	for _, dep := range deps {
+		outputs[dep] = GetOutput(dep).Output
+	}
+	return nil, nil
+}
+
+// Extract plugin labels used in template references like {{ .Plugins.LABEL.xyz }}
+func ExtractTemplateDependencies(yamlStr string) []string {
+    re := regexp.MustCompile(`{{\s*\.Plugins\.([^.}]+)\.[^}]+}}`)
+    matches := re.FindAllStringSubmatch(yamlStr, -1)
+
+    var deps []string
+    for _, match := range matches {
+        if len(match) > 1 {
+            deps = append(deps, match[1])
+        }
+    }
+
+    
+    return deps
+}

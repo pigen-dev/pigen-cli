@@ -4,6 +4,8 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package plugin
 
 import (
+	// "fmt"
+
 	"fmt"
 
 	"github.com/pigen-dev/pigen-cli/internal/plugin"
@@ -23,7 +25,7 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		pluginName := args[0]
-		outputResp := plugin.GetOutput("pigen-plugins.yaml",pluginName)
+		outputResp := plugin.GetOutput(pluginName)
 		if outputResp.Error != nil {
 			fmt.Printf("❌ Error getting output: %s\n", outputResp.Error)
 		} else {

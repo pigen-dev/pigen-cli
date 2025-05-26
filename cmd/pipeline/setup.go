@@ -26,7 +26,7 @@ to quickly create a Cobra application.`,
 		if err != nil {
 			fmt.Printf("Error setting up pipeline: %v\n", err)
 		} else {
-			fmt.Println("Pipeline setup successfully")
+			fmt.Println("✅ Pipeline setup successfully")
 		}
 	},
 }
