@@ -8,8 +8,9 @@ import (
 	"os"
 
 	"github.com/pigen-dev/pigen-cli/cmd/config"
-	"github.com/pigen-dev/pigen-cli/cmd/plugin"
 	"github.com/pigen-dev/pigen-cli/cmd/pipeline"
+	"github.com/pigen-dev/pigen-cli/cmd/plugin"
+	"github.com/pigen-dev/pigen-cli/cmd/project"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -71,6 +72,7 @@ func AddSubCommandPaletts(){
 	rootCmd.AddCommand(plugin.PluginCmd)
 	rootCmd.AddCommand(config.ConfigCmd)
 	rootCmd.AddCommand(pipeline.PipelineCmd)
+	rootCmd.AddCommand(project.ProjectCmd)
 }
 
 func init() {

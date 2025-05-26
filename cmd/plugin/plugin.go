@@ -1,10 +1,10 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package plugin
 
 import (
+
 	"github.com/spf13/cobra"
 )
 
@@ -28,6 +28,7 @@ func addSubCommands(){
 	PluginCmd.AddCommand(installCmd)
 	PluginCmd.AddCommand(destroyCmd)
 	PluginCmd.AddCommand(outputCmd)
+	PluginCmd.AddCommand(addCmd)
 }
 
 func init() {

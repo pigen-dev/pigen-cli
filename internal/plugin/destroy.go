@@ -13,16 +13,21 @@ func DestroyPlugin(filePath, pluginName string) error {
 	// 1. Destroy logic here
 	pluginFile := &PluginFile{}
 	// Read the file content
-	coreEndpoint, err := pluginFile.GetPlugins(filePath)
+	err := helpers.GetYamlFileSafe("pigen-plugins.yaml", pluginFile)
 	if err != nil {
 		return fmt.Errorf("failed to read plugin file: %w", err)
 	}
-	DestroyEndpoint := fmt.Sprintf("%s/destroy_plugin", coreEndpoint)
+	DestroyEndpoint := "/destroy_plugin"
 
 	for _, plugin := range pluginFile.Plugins {
 		var coreResp pkg.PigenCoreResponse
 		if plugin.Plugin.Label == pluginName {
 			fmt.Println("⏳ Destroying plugin:", plugin.Plugin.Label)
+			// Replace Placeholders
+			err := PluginParser(&plugin)
+			if err != nil {
+				return fmt.Errorf("can't parse plugin: %w", err)
+			}
 			// Send the destroy request to the Pigen Core
 			resp, err := PluginPostRequest(plugin, DestroyEndpoint)
 			defer resp.Body.Close()
@@ -47,11 +52,10 @@ func UpdatePluginYaml(filePath, pluginName string) error {
 	// 2. Update the plugin.yaml file
 	pluginFile := &PluginFile{}
 	// Read the file content
-	_, err := pluginFile.GetPlugins(filePath)
+	err := helpers.GetYamlFileSafe("pigen-plugins.yaml", pluginFile)
 	if err != nil {
 		return fmt.Errorf("failed to read plugin file: %w", err)
 	}
-
 	for index, plugin := range pluginFile.Plugins {
 		if plugin.Plugin.Label == pluginName {
 			fmt.Println("⏳ Updating plugin.yaml:", plugin.Plugin.Label)

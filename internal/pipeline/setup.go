@@ -8,8 +8,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/pigen-dev/pigen-cli/internal/plugin"
 	"github.com/pigen-dev/pigen-cli/helpers"
-	"github.com/pigen-dev/pigen-cli/internal/templater"
+	//"github.com/pigen-dev/pigen-cli/internal/plugin"
 	"github.com/pigen-dev/pigen-cli/pkg"
 	shared "github.com/pigen-dev/shared"
 	"github.com/spf13/viper"
@@ -27,7 +28,9 @@ func SetupPipeline(pigenStepsPath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to read pigen steps file: %w", err)
 	}
-	yamlFile, err = templater.PigenReplacer(yamlFile, "pigen-plugins.yaml")
+	// Replace the plugin outputs in the pigen file
+	
+	yamlFile, err = plugin.PigenFileParser(yamlFile)
 	if err != nil {
 		return fmt.Errorf("failed to replace secrets: %w", err)
 	}

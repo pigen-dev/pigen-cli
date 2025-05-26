@@ -6,12 +6,16 @@ config:
     project_number: "775465758731"
     project_id: aidodev
     project_region: "europe-west1"
-  github_url: https://github.com/aidocons/java-complete-pipeline.git
-  target_branch: "^develop$"
+  github_url: https://github.com/pigen-dev/pigen-core.git
+  target_branch: "^test-pigen$"
 steps:
-  - step: mvn-compile
-    placeholders:
-      flags: {{.ENV.GOOGLE_API_KEY}}
   - step: Docker-build-push
     placeholders:
-      image: {{ .Plugins.GOOGLE_CLOUD_RUN_DEMO.cloud_run_url }}
+      image: "{{.Plugins.ARTIFACT_REGISTRY_DEMO.repository_url}}/landing:latest"
+  - step: google-cloud-run
+    placeholders:
+      service_name: {{.Plugins.GOOGLE_CLOUD_RUN_DEMO.service_name}}
+      image: {{.Plugins.ARTIFACT_REGISTRY_DEMO.repository_url}}
+      secrets:
+        secret_list: {{.Plugins.SECRET_MANAGER_DEMO.secrets_list}}
+        secret_prefix: {{.Plugins.SECRET_MANAGER_DEMO.prefix}}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
 
 	"gopkg.in/yaml.v3"
 )
@@ -46,5 +47,27 @@ func WriteYamlFile(filePath string, in any) error {
 		return fmt.Errorf("failed to write YAML file: %w", err)
 	}
 	fmt.Printf("✅ Successfully wrote to %s\n", filePath)
+	return nil
+}
+
+// This wraps any {{...}} template in quotes if it's not already quoted
+func WrapTemplatesInQuotes(yamlContent string) string {
+    // Match unquoted templates in values
+    re := regexp.MustCompile(`(?m):\s*(\{\{[^{}]+\}\})`)
+    return re.ReplaceAllString(yamlContent, `: "$1"`)
+}
+
+func GetYamlFileSafe(filePath string, out any) (error) {
+	// Read the file content
+	yamlFile, err := ReadYamlFile(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to read plugin file: %w", err)
+	}
+	safeContent := WrapTemplatesInQuotes(string(yamlFile))
+	// Unmarshal the file content into the PluginFile struct
+	err = YamlToStruct([]byte(safeContent), out)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal plugin file: %w", err)
+	}
 	return nil
 }

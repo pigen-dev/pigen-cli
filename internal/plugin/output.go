@@ -4,19 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+
+	"github.com/pigen-dev/pigen-cli/helpers"
 	shared "github.com/pigen-dev/shared"
 )
 
-func GetAllOutputs(filePath string) (map[string]any, error) {
-	pluginFile := &PluginFile{}
-	// Read the file content
-	coreEndpoint, err := pluginFile.GetPlugins(filePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read plugin file: %w", err)
-	}
+func GetAllOutputs(pluginFile PluginFile) (map[string]any, error) {
+	
 	outputs := make(map[string]any)
 	for _, plugin := range pluginFile.Plugins {
-		output := GetOutputData(plugin, coreEndpoint)
+		output := GetOutputData(plugin)
 		if output.Error != nil {
 				return nil, fmt.Errorf("failed to get output for plugin %s: %w", plugin.Plugin.Label, output.Error)
 		}
@@ -29,26 +26,27 @@ func GetAllOutputs(filePath string) (map[string]any, error) {
 	return outputs, nil
 }
 
-func GetOutput(filePath, pluginName string) (shared.GetOutputResponse) {
+func GetOutput(pluginName string) (shared.GetOutputResponse) {
 	outputResp := shared.GetOutputResponse{}
-	// 1. Destroy logic here
 	pluginFile := &PluginFile{}
-	// Read the file content
-	coreEndpoint, err := pluginFile.GetPlugins(filePath)
+	err := helpers.GetYamlFileSafe("pigen-plugins.yaml", pluginFile)
 	if err != nil {
-		return shared.GetOutputResponse{
-			Error: fmt.Errorf("failed to read plugin file: %w", err),
-			Output: nil,
-		}
+		outputResp.Error = fmt.Errorf("failed to read plugin file: %w", err)
+		return outputResp
 	}
-	
+
 	found := false
 	for _, plugin := range pluginFile.Plugins {
 		if plugin.Plugin.Label == pluginName {
 			found = true
 			fmt.Println("⏳ Outputting plugin:", pluginName)
 			// Send the get output request to the Pigen Core
-			outputResp = GetOutputData(plugin, coreEndpoint)
+			err := PluginParser(&plugin)
+			if err != nil {
+				outputResp.Error = fmt.Errorf("can't parse plugin: %w", err)
+				return outputResp
+			}
+			outputResp = GetOutputData(plugin)
 			break
 		}
 	}
@@ -60,13 +58,18 @@ func GetOutput(filePath, pluginName string) (shared.GetOutputResponse) {
 	return outputResp
 }
 
-func GetOutputData(plugin shared.PluginStruct, coreEndpoint string) (shared.GetOutputResponse) {
+func GetOutputData(plugin shared.PluginStruct) (shared.GetOutputResponse) {
 	outputResp := shared.GetOutputResponse{}
 	// Send the get output request to the Pigen Core
-	getOutputEndpoint := fmt.Sprintf("%s/get_output", coreEndpoint)
-	resp, err := PluginPostRequest(plugin, getOutputEndpoint)
+	resp, err := PluginPostRequest(plugin, "/get_output")
 	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return shared.GetOutputResponse{
+			Error: fmt.Errorf("failed to read response body: %w", err),
+			Output: nil,
+		}
+	}
 	err = json.Unmarshal(body, &outputResp)
 	if err != nil {
 		return shared.GetOutputResponse{
@@ -74,5 +77,6 @@ func GetOutputData(plugin shared.PluginStruct, coreEndpoint string) (shared.GetO
 			Output: nil,
 		}
 	}
+	outputResp.Output = helpers.CleanPluginOutput(outputResp.Output)
 	return outputResp
 }
