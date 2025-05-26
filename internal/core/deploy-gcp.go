@@ -7,6 +7,8 @@ import (
 	"cloud.google.com/go/iam/apiv1/iampb"
 	"cloud.google.com/go/run/apiv2"
 	runpb "cloud.google.com/go/run/apiv2/runpb"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type PigenCoreGCP struct {
@@ -34,6 +36,9 @@ func (g *PigenCoreGCP) DeployPigenCore() (string, error) {
 		// If the service already exists, return its URI
 		fmt.Println("Service already exists, returning existing URI...")
 		return uri, nil
+	}
+	if uri == "" && err == nil {
+		fmt.Println("Service does not exist, creating new service...")
 	}
 	ressources := &runpb.ResourceRequirements{
 		Limits: map[string]string{
@@ -113,7 +118,7 @@ func serviceExists(ctx context.Context, client *run.ServicesClient, projectID, r
 	}
 	resp, err := client.GetService(ctx, getServiceRequest)
 	if err != nil {
-		if err.Error() == "rpc error: code = NotFound desc = Not found" {
+		if status.Code(err) == codes.NotFound  {
 		return "", nil
 		}
 		return "", fmt.Errorf("error checking if service exists: %v", err)
