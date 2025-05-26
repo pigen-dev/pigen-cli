@@ -1,0 +1,49 @@
+plugins:
+
+# This is an artifact registry plugin
+# Artifact Registry is a fully managed service that allows you to store and manage your container images and other artifacts in Google Cloud.
+- id: artifact_registry_tf
+  repo_url: https://github.com/pigen-dev/artifact-registry-tf-plugin
+  version: v0.1.2
+  plugin:
+    label: ARTIFACT_REGISTRY_DEMO
+    config:
+      location:           # Set your region
+      repo_id:            # Set your repository name
+      project_id:         # Set your project id
+      description:        # Optional description of the repository
+    output:
+      repo_url:
+
+# This is a Google Cloud Run plugin
+# Google Cloud Run is a fully managed compute platform that automatically scales your stateless containers.
+- id: google_cloud_run
+  repo_url: https://github.com/pigen-plugins/google-cloud-run
+  version: v0.2.1
+  plugin:
+    label: GOOGLE_CLOUD_RUN_DEMO
+    config:
+        location:             # Set your region
+        project_id:           # Set your project id
+        service_name:         # Set your service name
+        unauthenticated: true
+    output:
+        cloud_run_url:
+        service_name:
+
+# This is a Secret Manager plugin
+# Secret Manager is a secure and convenient way to store API keys, passwords, certificates, and other sensitive data.
+- id: secret_manager
+  repo_url: https://github.com/pigen-plugins/secret-manager
+  version: v0.1.3
+  plugin:
+    label: SECRET_MANAGER_DEMO
+    config:
+        project_id:           # Set your project id
+        prefix:               # A Prefix will be used to prefix the environment variable names to format the secret names
+        secrets:
+          # I'm using .env.pigen file to pass secret values
+          GOOGLE_API_KEY: {{.ENV.GOOGLE_API_KEY}}
+    output:
+      secrets_list: []
+      prefix:
