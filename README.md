@@ -291,9 +291,9 @@ And you can use it in your `pigen-plugins.yaml` file:
 ---
 
 # Simple Example 
-In [simples](https://github.com/pigen-dev/pigen-cli/releases) folder you can find some useful simples to test the tool.
+In [simples](https://github.com/pigen-dev/pigen-cli/simples) folder you can find some useful simples to test the tool.
 
-[cloud-run-pipeline](https://github.com/pigen-dev/pigen-cli/releases)  is a simple pipeline example to deploy a webapp on cloud run. Read the [README.md](#) file to better understand the example.
+[cloud-run-pipeline](https://github.com/pigen-dev/pigen-cli/simples/gcp/cloudrun-pipeline)  is a simple pipeline example to deploy a webapp on cloud run. Read the [README.md](#) file to better understand the example.
 
 
 # 🌍 Community-Driven
