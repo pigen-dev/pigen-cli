@@ -33,7 +33,6 @@ func GenerateScript(pigenStepsPath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to replace secrets: %w", err)
 	}
-	fmt.Println("yamlfile: ", string(yamlFile))
 	err = generate(yamlFile)
 	if err != nil {
 		return fmt.Errorf("failed to generate script: %w", err)
