@@ -8,10 +8,10 @@ plugins:
   plugin:
     label: ARTIFACT_REGISTRY_DEMO
     config:
-      location: # Set your region
-      repo_id: # Set your repository name
-      project_id: # Set your project id
-      description: # Optional description of the repository
+      location:           # Set your region
+      repo_id:            # Set your repository name
+      project_id:         # Set your project id
+      description:        # Optional description of the repository
     output:
       repo_url:
 
@@ -23,9 +23,9 @@ plugins:
   plugin:
     label: GOOGLE_CLOUD_RUN_DEMO
     config:
-        location: # Set your region
-        project_id: # Set your project id
-        service_name: # Set your service name
+        location:             # Set your region
+        project_id:           # Set your project id
+        service_name:         # Set your service name
         unauthenticated: true
     output:
         cloud_run_url:
@@ -39,8 +39,8 @@ plugins:
   plugin:
     label: SECRET_MANAGER_DEMO
     config:
-        project_id: # Set your project id
-        prefix: # A Prefix will be used to prefix the environment variable names to format the secret names
+        project_id:           # Set your project id
+        prefix:               # A Prefix will be used to prefix the environment variable names to format the secret names
         secrets:
           # I'm using .env.pigen file to pass secret values
           GOOGLE_API_KEY: {{.ENV.GOOGLE_API_KEY}}

@@ -138,7 +138,7 @@ plugins:
 
 - Each plugin must have a **unique label** to avoid conflicts.
 
-### 3.  Install the Plugin
+### 3.  Install your Plugins
    Once you've added all your desired plugins:
    ```bash
    pigen plugin install
@@ -228,13 +228,13 @@ steps:
 - The CICD tool is a special plugin that will be installed in your cloud environment.
 - The CICD tool block can be found also in [Plugin Hub](#) which makes it easy for you to write your `pigen-steps.yaml` file 
 ---
-### 1.  Setup your CICD tool
+### 1.  Setup Your CICD tool
   Deploy your cicd tool plugin if it needs to and create a trigger on your branch
    ```bash
    pigen pipeline setup
    ```
 
-### 2.  Destroy a Plugin
+### 2.  Generate Your Pipeline Script
    To finally generate your pipeline script:
    ```bash
    pigen pipeline generate
@@ -258,7 +258,7 @@ steps:
 Doing so the step image placeholder will take as value the **artifact registry** created **repo url** concatenated with `/testing:latest`
 
 ---
-### 🔗 Use Secret Values in Pigen files
+### 🔑 Use Secret Values in Pigen files
 
 As Pigen files will probably get pushed in your git repo you don't want to share sensitive data like API keys or passwords.
 
@@ -289,6 +289,12 @@ And you can use it in your `pigen-plugins.yaml` file:
 ```
 
 ---
+
+# Simple Example 
+In [simples](https://github.com/pigen-dev/pigen-cli/releases) folder you can find some useful simples to test the tool.
+
+[cloud-run-pipeline](https://github.com/pigen-dev/pigen-cli/releases)  is a simple pipeline example to deploy a webapp on cloud run. Read the [README.md](#) file to better understand the example.
+
 
 # 🌍 Community-Driven
 

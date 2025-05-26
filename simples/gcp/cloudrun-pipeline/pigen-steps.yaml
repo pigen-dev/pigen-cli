@@ -13,7 +13,7 @@ config:
 
 steps:
   # This step builds and pushes the Docker image to Google Artifact Registry
-  - step: Docker-build-push
+  - step: docker-build-push
     placeholders:
       # I'm using the ARTIFACT_REGISTRY_DEMO plugin output to get the repository URL
       image: "{{.Plugins.ARTIFACT_REGISTRY_DEMO.repository_url}}/landing:latest"
