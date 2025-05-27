@@ -15,7 +15,11 @@ func PigenFileParser(file []byte) ([]byte, error) {
 	deps := ExtractTemplateDependencies(string(file))
 	outputs := make(map[string]any)
 	for _, dep := range deps {
-		outputs[dep] = GetOutput(dep).Output
+		pluginOutput := GetOutput(dep)
+		if pluginOutput.Error != nil {
+			return nil, fmt.Errorf("failed to get output for plugin %s: %w", dep, pluginOutput.Error)
+		}
+		outputs[dep] = pluginOutput.Output
 	}
 	res, err := templater.PigenReplacer(file, outputs)
 	if err != nil {
