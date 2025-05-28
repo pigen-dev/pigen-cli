@@ -24,7 +24,11 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		pluginName := args[0]
 		// 1. Destroy logic here
-		plugin.DestroyPlugin("pigen-plugins.yaml", pluginName)
+		err := plugin.DestroyPlugin("pigen-plugins.yaml", pluginName)
+		if err != nil {
+			fmt.Printf("❌ Failed to destroy plugin: %s error: %s\n", pluginName, err)
+			return
+		}
 		fmt.Printf("✅ Plugin \"%s\" destroyed successfully.\n", pluginName)
 
 		// 2. Get the value and check if the flag was explicitly passed
