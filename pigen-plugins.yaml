@@ -1,1 +1,54 @@
-plugins: []
+plugins:
+# This is an artifact registry plugin
+# Artifact Registry is a fully managed service that allows you to store and manage your container images and other artifacts in Google Cloud.
+- id: artifact_registry_tf
+  repo_url: https://github.com/pigen-dev/artifact-registry-tf-plugin
+  version: v0.1.4
+  plugin:
+    label: WEBAPP_AR_DEV
+    config:
+      location: europe-west1
+      repo_id: pigen-develop
+      project_id: aidodev
+      description: this is pigen develop repo
+    output:
+      repository_url: null
+
+# This is a Google Cloud Run plugin
+# Google Cloud Run is a fully managed compute platform that automatically scales your stateless containers.
+- id: google_cloud_run
+  repo_url: https://github.com/pigen-plugins/google-cloud-run
+  version: v0.2.2
+  plugin:
+    label: WEBAPP_CLOUD_RUN_DEV
+    config:
+        location: europe-west1
+        project_id: aidodev
+        service_name: webapp-dev
+        unauthenticated: true
+    output:
+        cloud_run_url: null
+        service_name:
+
+# This is a Secret Manager plugin
+# Secret Manager is a secure and convenient way to store API keys, passwords, certificates, and other sensitive data.
+- id: secret_manager
+  repo_url: https://github.com/pigen-plugins/secret-manager
+  version: v0.1.4
+  plugin:
+    label: WEBAPP_SM_DEV
+    config:
+        project_id: aidodev
+        prefix: WEBAPP_DEV
+        secrets:
+          # I'm using ;env;pigen file to pass secret values
+          # GOOGLE_API_KEY: {{.ENV.GOOGLE_API_KEY}}
+          AUTH0_SECRET : {{.ENV.AUTH0_SECRET}}
+          AUTH0_BASE_URL: {{.ENV.AUTH0_BASE_URL}}
+          # AUTH0_ISSUER_BASE_URL: {{.ENV.AUTH0_ISSUER_BASE_URL}}
+          # AUTH0_CLIENT_ID: {{.ENV.AUTH0_CLIENT_ID}}
+          # AUTH0_CLIENT_SECRET: {{.ENV.AUTH0_CLIENT_SECRET}}
+          # NEXT_PUBLIC_BACKEND_URL: {{.ENV.NEXT_PUBLIC_BACKEND_URL}}
+    output:
+      secrets_list: []
+      prefix:

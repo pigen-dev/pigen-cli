@@ -1,21 +1,22 @@
 steps:
-- id: Docker-build-push
+- id: docker-build-push
   name: gcr.io/cloud-builders/docker
   entrypoint: bash
   args:
   - -c
   - |-
-    docker build -t europe-west1-DOCKER.pkg.dev/aidodev/pigen-demo/landing:latest .
-    docker push europe-west1-DOCKER.pkg.dev/aidodev/pigen-demo/landing:latest
+    docker build -t europe-west1-docker.pkg.dev/aidodev/pigen-develop/webapp_dev:latest .
+    docker push europe-west1-docker.pkg.dev/aidodev/pigen-develop/webapp_dev:latest
 - id: google-cloud-run
   name: gcr.io/cloud-builders/gcloud
   entrypoint: sh
   args:
   - -c
-  - |-
-    gcloud run services update pigen-landing \
-    --region=us-east1 \
-    --image=europe-west1-DOCKER.pkg.dev/aidodev/pigen-demo \
-      --set-secrets=MY_SECRET=PIGEN_MY_SECRET:latest \
+  - |
+    gcloud run services update webapp-dev \
+      --region=europe-west1 \
+      --set-secrets=AUTH0_BASE_URL=WEBAPP_DEV_AUTH0_BASE_URL:latest \
+      --set-secrets=AUTH0_SECRET=WEBAPP_DEV_AUTH0_SECRET:latest \
+      --image=europe-west1-docker.pkg.dev/aidodev/pigen-develop/webapp_dev:latest
 options:
   logging: CLOUD_LOGGING_ONLY
