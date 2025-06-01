@@ -1,6 +1,9 @@
 package helpers
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // CleanPluginOutput recursively removes wrapping quotes from string values in map[string]any
 func CleanPluginOutput(data map[string]any) map[string]any {
@@ -21,7 +24,7 @@ func cleanSlice(slice []any) []any {
     for i, v := range slice {
         switch val := v.(type) {
         case string:
-            slice[i] = trimWrappedQuotes(val)
+            slice[i] = formatStringSlice(val)
         case map[string]any:
             slice[i] = CleanPluginOutput(val)
         case []any:
@@ -37,4 +40,9 @@ func trimWrappedQuotes(s string) string {
         return strings.Trim(s, "\"")
     }
     return s
+}
+
+// I'm doing so to format the list of strings because json Unmarshal turn the list of string ["test", "test2"] into [test test2]
+func formatStringSlice(s string) string {
+	return fmt.Sprintf("\"%s\",", trimWrappedQuotes(s))
 }

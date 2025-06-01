@@ -1,21 +1,35 @@
 type: cloudbuild
-version: v1.1.0
+version: v1.1.1
 repo_url: https://github.com/pigen-dev/cloudbuild-plugin
 config:
   deployment:
+    #NOTE: The project_number should be set in the format of a string ( "775465758731" not 775465758731 )
     project_number: "775465758731"
     project_id: aidodev
     project_region: "europe-west1"
-  github_url: https://github.com/pigen-dev/pigen-core.git
-  target_branch: "^test-pigen$"
+  github_url: https://github.com/pigen-dev/webapp.git
+  target_branch: "^develop$"
+
+
 steps:
-  - step: Docker-build-push
+  # This step builds and pushes the Docker image to Google Artifact Registry
+  - step: docker-build-push
     placeholders:
-      image: "{{.Plugins.ARTIFACT_REGISTRY_DEMO.repository_url}}/landing:latest"
+      # I'm using the ARTIFACT_REGISTRY_DEMO plugin output to get the repository URL
+      image: "{{.Plugins.WEBAPP_AR_DEV.repository_url}}/webapp_dev:latest"
+
+
+  # This step deploys the service to Google Cloud Run
   - step: google-cloud-run
     placeholders:
-      service_name: {{.Plugins.GOOGLE_CLOUD_RUN_DEMO.service_name}}
-      image: {{.Plugins.ARTIFACT_REGISTRY_DEMO.repository_url}}
+      # I'm using the GOOGLE_CLOUD_RUN_DEMO plugin output to get the service name
+      service_name: {{.Plugins.WEBAPP_CLOUD_RUN_DEV.service_name}}
+      region: europe-west1
+      image: "{{.Plugins.WEBAPP_AR_DEV.repository_url}}/webapp_dev:latest"
       secrets:
-        secret_list: {{.Plugins.SECRET_MANAGER_DEMO.secrets_list}}
-        secret_prefix: {{.Plugins.SECRET_MANAGER_DEMO.prefix}}
+        # I'm using the SECRET_MANAGER_DEMO plugin output to get the secrets list
+        # .Plugins.SECRET_MANAGER_DEMO.secrets_list will return a list of secrets that will be injected into the Cloud Run service
+        secret_list: {{.Plugins.WEBAPP_SM_DEV.secrets_list}}
+        # The prefix is a string that will be used to prefix the environment variable names to format the secret names
+        # For example, if the prefix is LANDING and the environment variable is GOOGLE_API_KEY, the secret name will be LANDING_GOOGLE_API_KEY
+        secret_prefix: {{.Plugins.WEBAPP_SM_DEV.prefix}}
