@@ -1,0 +1,17 @@
+project_number: "775465758731"
+
+project_id: aidodev
+
+region: europe-west1
+
+git_repo: https://github.com/pigen-dev/webapp.git
+
+image_name: webapp-dev/latest
+
+secrets:
+- AUTH0_SECRET : {{.ENV.AUTH0_SECRET}}
+- AUTH0_BASE_URL: {{.ENV.AUTH0_BASE_URL}}
+
+secret_prefix: WEBAPP_DEV
+
+project_name: webapp-dev

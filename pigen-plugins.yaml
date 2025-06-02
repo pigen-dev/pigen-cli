@@ -7,9 +7,9 @@ plugins:
   plugin:
     label: WEBAPP_AR_DEV
     config:
-      location: europe-west1
-      repo_id: pigen-develop
-      project_id: aidodev
+      location: {{.Values.region}}
+      repo_id: {{.Values.project_name}}
+      project_id: {{.Values.project_id}}
       description: this is pigen develop repo
     output:
       repository_url: null
@@ -22,9 +22,9 @@ plugins:
   plugin:
     label: WEBAPP_CLOUD_RUN_DEV
     config:
-        location: europe-west1
-        project_id: aidodev
-        service_name: webapp-dev
+        location: {{.Values.region}}
+        project_id: {{.Values.project_id}}
+        service_name: {{.Values.project_name}}
         unauthenticated: true
     output:
         cloud_run_url: null
@@ -38,13 +38,13 @@ plugins:
   plugin:
     label: WEBAPP_SM_DEV
     config:
-        project_id: aidodev
-        prefix: WEBAPP_DEV
-        secrets:
+        project_id: {{.Values.project_id}}
+        prefix: {{.Values.secret_prefix}}
+        secrets: {{.Values.secrets}}
           # I'm using ;env;pigen file to pass secret values
           # GOOGLE_API_KEY: {{.ENV.GOOGLE_API_KEY}}
-          AUTH0_SECRET : {{.ENV.AUTH0_SECRET}}
-          AUTH0_BASE_URL: {{.ENV.AUTH0_BASE_URL}}
+          # AUTH0_SECRET : {{.ENV.AUTH0_SECRET}}
+          # AUTH0_BASE_URL: {{.ENV.AUTH0_BASE_URL}}
           # AUTH0_ISSUER_BASE_URL: {{.ENV.AUTH0_ISSUER_BASE_URL}}
           # AUTH0_CLIENT_ID: {{.ENV.AUTH0_CLIENT_ID}}
           # AUTH0_CLIENT_SECRET: {{.ENV.AUTH0_CLIENT_SECRET}}

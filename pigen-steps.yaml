@@ -4,10 +4,10 @@ repo_url: https://github.com/pigen-dev/cloudbuild-plugin
 config:
   deployment:
     #NOTE: The project_number should be set in the format of a string ( "775465758731" not 775465758731 )
-    project_number: "775465758731"
-    project_id: aidodev
-    project_region: "europe-west1"
-  github_url: https://github.com/pigen-dev/webapp.git
+    project_number: {{.Values.project_number}} #"775465758731"
+    project_id: {{.Values.project_id}}
+    project_region: {{.Values.region}}
+  github_url: {{.Values.git_repo}} #https://github.com/pigen-dev/webapp.git
   target_branch: "^develop$"
 
 
@@ -16,7 +16,7 @@ steps:
   - step: docker-build-push
     placeholders:
       # I'm using the ARTIFACT_REGISTRY_DEMO plugin output to get the repository URL
-      image: "{{.Plugins.WEBAPP_AR_DEV.repository_url}}/webapp_dev:latest"
+      image: "{{.Plugins.WEBAPP_AR_DEV.repository_url}}/{{.Values.image_name}}"
 
 
   # This step deploys the service to Google Cloud Run
@@ -24,8 +24,8 @@ steps:
     placeholders:
       # I'm using the GOOGLE_CLOUD_RUN_DEMO plugin output to get the service name
       service_name: {{.Plugins.WEBAPP_CLOUD_RUN_DEV.service_name}}
-      region: europe-west1
-      image: "{{.Plugins.WEBAPP_AR_DEV.repository_url}}/webapp_dev:latest"
+      region: {{.Values.region}}
+      image: "{{.Plugins.WEBAPP_AR_DEV.repository_url}}/{{.Values.image_name}}"
       secrets:
         # I'm using the SECRET_MANAGER_DEMO plugin output to get the secrets list
         # .Plugins.SECRET_MANAGER_DEMO.secrets_list will return a list of secrets that will be injected into the Cloud Run service
